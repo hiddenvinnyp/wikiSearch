@@ -39,17 +39,15 @@ class MyClass(GeneratedClass):
         #pattern = 'm?m?m?(cm|cd|d?c?c?c?)(xc|xl|l?x?x?x?)(ix|iv|v?i?i?i?)$'
         #pattern = '\s*i*v*x*v*i\s'
         p = re.compile(pattern, re.I+re.U)
-        romanList = re.findall(p, line)
+        romanList = re.findall(p, line.decode("utf-8"))
         self.log(romanList)
         newList = []    
         
         for romanNum in romanList:    
-            for n in romanNum: 
-                if n != '':           
+            for n in romanNum:                 
+                if (n != '  ' and n !=''):      #костыль     
                     n = ''.join(n.split())
-                    newList.append(n)
-                    #line = re.sub(str(n), roman_to_arab(str(n)), line)
-                    #self.log(line)
+                    newList.append(n)                    
         self.log(newList)
         
         newList = [item.lower() for item in newList]
