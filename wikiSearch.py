@@ -47,23 +47,18 @@ def url_pars(words):
     headers = {'User-Agent' : 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'}
     values = {'Host' : 'whois.ripn.net', 'Whois' : 'test.ru'}
     data = urllib.urlencode(values)
-
     req = urllib2.Request(url, data, headers)   
 
-    #htmlCode = urllib2.urlopen(req).getcode() 
     try:
         html = urllib2.urlopen(req).read()
     except urllib2.URLError, e: # ловим 404 ошибку, если страницы нет
         if e.code == 404:
             return 'Ничего не знаю про это. Давай позже поговорим.'
-    else:
+    else:        
         #парсить html
         file = open('/var/persistent/home/nao/logz/test-url.txt','w') #тестовый файл с 'грязным' html
         
-        #~ ifile = open('/var/persistent/home/nao/logz/test-url-ish.txt','w')
         text = html.decode("utf-8").lower().encode("utf-8") #понижаем регистр всего текста
-        #~ ifile.write(text)
-        #~ ifile.close()
         
         text = re.split(u'см. также(?=</span>)|примечания(?=</span>)|литература(?=</span>)|read in another language(?=</span>)',text) #удалить всё после 'см.также' или 'примечания' или 'литература' или 'ссылки' или 'read in another language' 
     
@@ -74,6 +69,10 @@ def url_pars(words):
             b = re.sub(u'\[[^\]]+\]', '',a) #Удалить [], транскрипции
             c = re.sub(u'\([^\)\(]+\)', '',b)
             d = re.sub(u'т\.е\.', 'то есть',c) #Сокращения заменить на полные фразы
+            d = re.sub(u'о\.', 'остров', d)
+            d = re.sub(u'гг\.', 'года', d)
+            d = re.sub(u'г\.', 'год', d)
+            d = re.sub(u'описание википедииотказ от ответственности', '', d)
             e = re.sub(u'т\.д\.', 'так далее',d)
             
             #заменить римские цифры на арабские
